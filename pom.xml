@@ -70,18 +70,18 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.3.0</version>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Main-Class>com.abercap.mediainfo.api.CLI</Main-Class>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-	<distributionManagement>
-		<repository>
-			<id>aberdeen-releases</id>
-			<name>Aberdeen Releases</name>
-			<url>https://aberdeen.artifactoryonline.com/aberdeen/libs-release-local/</url>
-		</repository>
-		<snapshotRepository>
-			<id>aberdeen-snapshots</id>
-			<name>Aberdeen Snapshots</name>
-			<url>https://aberdeen.artifactoryonline.com/aberdeen/libs-snapshot-local/</url>
-		</snapshotRepository>
-	</distributionManagement>
 </project>
