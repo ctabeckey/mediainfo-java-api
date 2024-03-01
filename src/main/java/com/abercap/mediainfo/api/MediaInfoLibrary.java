@@ -15,9 +15,21 @@ import com.sun.jna.WString;
 
 
 interface MediaInfoLibrary extends Library {
-	
+
+	/**
+	 * Library Search Paths A search for a given library will scan the following locations:
+	 *
+	 * jna.library.path User-customizable path
+	 * jna.platform.library.path Platform-specific paths
+	 * On OSX, ~/Library/Frameworks, /Library/Frameworks, and /System/Library/Frameworks will be searched for a framework
+	 * with a name corresponding to that requested. Absolute paths to frameworks are also accepted, either ending at the
+	 * framework name (sans ".framework") or the full path to the framework shared library (e.g. CoreServices.framework/CoreServices).
+	 * Context class loader classpath. Deployed native libraries may be installed on the classpath under ${os-prefix}/LIBRARY_FILENAME,
+	 * where ${os-prefix} is the OS/Arch prefix returned by Platform.getNativeLibraryResourcePrefix(). If bundled in a jar file, the
+	 * resource will be extracted to jna.tmpdir for loading, and later removed (but only if jna.nounpack is false or not set).
+	 * You may set the system property jna.debug_load=true to make JNA print the steps of its library search to the console.
+	 */
 	MediaInfoLibrary INSTANCE = (MediaInfoLibrary) Native.loadLibrary("mediainfo", MediaInfoLibrary.class, singletonMap(OPTION_FUNCTION_MAPPER, new FunctionMapper() {
-		
 		public String getFunctionName(NativeLibrary lib, Method method) {
 			// MediaInfo_New(), MediaInfo_Open() ...
 			return "MediaInfo_" + method.getName();

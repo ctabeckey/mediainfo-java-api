@@ -2,18 +2,34 @@ package com.abercap.mediainfo.api;
 
 import org.apache.commons.cli.*;
 
-import java.io.File;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import com.sun.jna.Platform;
 
 public class CLI {
-    private final static Options options;
+    private static Options options;
     private static MediaInfo mediaInfo;
 
     static {
-        // create Options object
-        options = new Options();
+        try {
+            int osType = Platform.getOSType();
+            String osName = System.getProperty("os.name");
+            String osArch = System.getProperty("os.arch");
+            final String libPrefix = osArch != null && !osArch.isEmpty()
+                    ? String.format("%d %s-%s", osType, osName, osArch)
+                    : String.format("%d %s", osType, osName);
+            System.out.println("Loading mediainfo for [" + libPrefix + "]");
+
+            // create Options object
+            options = new Options();
+        } catch(Throwable t) {
+            System.err.println(t.getMessage());
+        }
     }
 
     public static void main(final String[] argv) {
@@ -87,5 +103,20 @@ public class CLI {
         }
 
         return result.toString();
+    }
+
+    public static void addLibraryPath(String pathToAdd) throws Exception {
+        Field usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
+        usrPathsField.setAccessible(true);
+
+        String[] paths = (String[]) usrPathsField.get(null);
+
+        for (String path : paths)
+            if (path.equals(pathToAdd))
+                return;
+
+        String[] newPaths = Arrays.copyOf(paths, paths.length + 1);
+        newPaths[newPaths.length - 1] = pathToAdd;
+        usrPathsField.set(null, newPaths);
     }
 }

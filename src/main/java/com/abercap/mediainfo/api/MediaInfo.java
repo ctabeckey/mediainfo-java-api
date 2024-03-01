@@ -143,13 +143,6 @@ public class MediaInfo implements Closeable {
 		MediaInfoLibrary.INSTANCE.Delete(handle);
 		handle = null;
 	}
-	
-
-	@Override
-	protected void finalize() {
-		dispose();
-	}
-	
 
 	public enum StreamKind {
 		General,

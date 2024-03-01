@@ -23,11 +23,6 @@
 			<organizationUrl>https://www.abercap.com</organizationUrl>
 		</developer>
 	</developers>
-	<scm>
-		<connection>scm:git:git@github.com:aberdeen-services/mediainfo-java-api.git</connection>
-		<developerConnection>scm:git:git@github.com:aberdeen-services/mediainfo-java-api.git</developerConnection>
-		<url>https://github.com/aberdeen-services/mediainfo-java-api</url>
-	</scm>
 	<properties>
 		<maven-source-plugin.version>3.0.0</maven-source-plugin.version>
 		<maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
@@ -36,7 +31,7 @@
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna-platform</artifactId>
-			<version>4.1.0</version>
+			<version>5.14.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
@@ -48,7 +43,16 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<compilerVersion>11</compilerVersion>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<version>3.3.0</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -61,6 +65,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.6.3</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -72,15 +77,67 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.3.0</version>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/libs
+							</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-resources-plugin</artifactId>-->
+<!--				<version>3.3.1</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>copy-binaries</id>-->
+<!--						<phase>prepare-package</phase>-->
+<!--						<goals><goal>copy-resources</goal></goals>-->
+<!--						<configuration>-->
+<!--							<outputDirectory>${project.build.directory}/libs</outputDirectory>-->
+<!--							<resources>-->
+<!--								<resource>-->
+<!--									<directory>src/main/resources</directory>-->
+<!--									<includes>-->
+<!--										<include>**</include>-->
+<!--									</includes>-->
+<!--								</resource>-->
+<!--							</resources>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<archive>
-						<manifestEntries>
-							<Main-Class>com.abercap.mediainfo.api.CLI</Main-Class>
-						</manifestEntries>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.abercap.mediainfo.api.CLI</mainClass>
+						</manifest>
 					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
 				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -10,3 +10,6 @@ target/
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 /.idea/
+
+.DS_Store
+src/.DS_Store
